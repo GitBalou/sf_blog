@@ -2,6 +2,7 @@
 
 namespace BlogBundle\Controller;
 
+use BlogBundle\Repository\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -36,7 +37,20 @@ class BlogController extends Controller
      */
     public function categoryAction($categorySlug)
     {
-        return new Response('Category action');
+        $repoCat = $this->getDoctrine()->getRepository('BlogBundle:Category');
+        $category = $repoCat->findOneBySlug($categorySlug);
+
+        if( null == $category) {
+            throw $this->createNotFoundException('Cette catégorie n\'existe pas');
+        }
+
+        $repoPost = $this->getDoctrine()->getRepository('BlogBundle:Post');
+        $posts = $repoPost->findByCategory($category);
+
+        return $this->render('BlogBundle:Blog:category.html.twig', [
+            'category' => $category,
+            'posts' => $posts
+        ]);
     }
 
     /**
@@ -49,6 +63,15 @@ class BlogController extends Controller
      */
     public function postAction($categorySlug, $postSlug)
     {
-        return new Response('Post action');
+        $repo = $this->getDoctrine()->getRepository('BlogBundle:Post');
+        $post = $repo->getPost($categorySlug, $postSlug);
+
+        if( null == $post) {
+            throw $this->createNotFoundException('Cet article n\'existe pas');
+        }
+
+        return $this->render('BlogBundle:Blog:post.html.twig', [
+            'post' => $post
+        ]);
     }
 }

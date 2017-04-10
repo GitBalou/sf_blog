@@ -1,0 +1,21 @@
+{% extends "BlogBundle::base.html.twig" %}
+
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <h1>{{ post.title }}</h1>
+        </div>
+
+        <div>
+            <p>
+                {{ post.content | raw}}
+            </p>
+            <em>Publié le {{ post.publishedAt|date('d/m/Y') }}</em>, par
+            <strong>{{ post.author }}</strong> dans
+            <a href="{{ path('blog_category', {categorySlug: post.category.slug}) }}">
+                {{ post.category.title }}
+            </a>
+        </div>
+
+    </div>
+{% endblock %}
